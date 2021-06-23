@@ -48,7 +48,7 @@ class BaseService(val serviceName: String) extends App {
   implicit val executor: ExecutionContext = system.executionContext
 
   def banner(): Unit = {
-    val mspLine = s"Platform version $version"
+    val mspLine = s"Compute Platform version $version"
     val svcVersion = if (config.hasPath("app.version")) config.getString("app.version") else ""
     val svcLine = if (svcVersion.nonEmpty) s"$serviceName $svcVersion" else serviceName
     val longest = List(mspLine, svcLine).maxBy(_.length)
