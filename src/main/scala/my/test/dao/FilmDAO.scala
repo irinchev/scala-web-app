@@ -1,10 +1,10 @@
 package my.test.dao
 
-import com.typesafe.scalalogging._
+//import com.typesafe.scalalogging._
 import my.test.Film
 import scalikejdbc.{DB, scalikejdbcSQLInterpolationImplicitDef}
 
-object FilmDAO extends LazyLogging {
+object FilmDAO {
   def findMovies(): List[Film] =
     DB readOnly { implicit session =>
       sql"SELECT * FROM film limit 100"
