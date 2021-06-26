@@ -12,7 +12,7 @@ job "web-app" {
       driver = "raw_exec"
       config {
         command = "java"
-        args    = ["-Dconfig.resource=dev.conf", "-jar", "${NOMAD_TASK_DIR}/@@JAR@@"]
+        args    = ["-Xms2G", "-Xmx4G", "-Dconfig.resource=dev.conf", "-jar", "${NOMAD_TASK_DIR}/@@JAR@@"]
       }
       env {
         APP_VERSION   = "@@VER@@"
