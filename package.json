@@ -1,0 +1,34 @@
+{
+  "name": "web-app",
+  "license": "UNLICENSED",
+  "version": "1.0.0",
+  "description": "Web App",
+  "main": "./src/main/js/index.js",
+  "scripts": {
+    "start": "webpack serve --mode development --host 0.0.0.0 --progress --config src/main/js/webpack.config.js",
+    "build": "./node_modules/.bin/webpack --mode production"
+  },
+  "repository": "https://github.com/BatenkovT/Minimal-React.git",
+  "author": "The Next Company",
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "moment": "^2.29.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-react": "^7.14.5",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.2.6",
+    "file-loader": "^6.2.0",
+    "postcss-loader": "^6.1.1",
+    "style-loader": "^3.0.0",
+    "webpack": "^5.42.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2",
+    "tailwindcss": "^2.2.4",
+    "autoprefixer": "^10.2.6",
+    "postcss": "^8.3.5"
+  }
+}

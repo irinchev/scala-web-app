@@ -123,6 +123,11 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.18</version>
         </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.16.0</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
