@@ -2,16 +2,12 @@ package my.test.ws
 
 import akka.NotUsed
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
-import akka.http.scaladsl.server.Directives.{
-  complete,
-  extractWebSocketUpgrade,
-  get,
-  handleWebSocketMessages,
-  path
-}
+import akka.http.scaladsl.server.Directives.{get, handleWebSocketMessages, path}
 import akka.http.scaladsl.server.Route
-import akka.stream.scaladsl.{Flow, Sink}
-import akka.stream.typed.scaladsl.ActorSink
+import akka.stream.scaladsl.{Concat, Flow, Sink, Source}
+import io.circe.Decoder
+import io.circe.parser.decode
+import my.test.{IncomingMessage, JsonCodecs, Services}
 import org.slf4j.LoggerFactory
 
 object WebsocketHandler {
@@ -19,24 +15,31 @@ object WebsocketHandler {
   private val log = LoggerFactory.getLogger(WebsocketHandler.getClass)
 
   def ws(): Route = {
-    val svc = Flow[Message].map { m =>
-      log.info(s"$m")
-      m
-    }
+    implicit val decoder: Decoder[IncomingMessage] = JsonCodecs.decoder
     path("ws") {
       get {
-        handleWebSocketMessages({
-          Flow[Message].map {
-            case TextMessage.Strict(s) =>
-              log.info(s)
-              TextMessage.Strict("Ok got the message.")
-          }
-        })
-//        extractWebSocketUpgrade { upgrade =>
-//        log.info(s"$upgrade")
-//          complete(upgrade.handleMessages(svc))
-//        }
+        handleWebSocketMessages(
+          //          Flow[Message].map {
+          //            case TextMessage.Strict(s) =>
+          //              try {
+          //                val incoming = decode[IncomingMessage](s)
+          //              } catch {
+          //                case e: Exception => log.error("Cannot parse JSON string", e)
+          //              }
+          //              TextMessage.Strict("Ok got the message.")
+          //          }
+          Flow.fromSinkAndSource(
+            sink = parseIncomingMessage.to(Sink.foreach(log.info("{}", _))),
+            source = Source[Message](List(TextMessage("123123123123")))
+          )
+        )
       }
     }
   }
+
+  private def parseIncomingMessage(implicit decoder: Decoder[IncomingMessage]): Flow[Message, IncomingMessage, NotUsed] =
+    Flow[Message].collect {
+      case TextMessage.Strict(s) =>
+        decode[IncomingMessage](s).right.get
+    }
 }

@@ -1,6 +1,10 @@
 import React from "react";
 import Nav from "./Nav";
+import MainView from "./admin/MainView";
+import {inject, observer} from "mobx-react";
 
+@inject('dataStore')
+@observer
 class App extends React.Component {
 
     constructor(props) {
@@ -20,10 +24,14 @@ class App extends React.Component {
         let that = this;
         let connectInterval;
         ws.onopen = () => {
-            this.setState({ ws: ws });
-            ws.send("Hi there")
+            this.setState({ws: ws});
+            let sessionInit = {mType: "SessionInit", ts: new Date().toISOString()};
+            ws.send(JSON.stringify(sessionInit));
             that.timeout = 250;
             clearTimeout(connectInterval);
+        };
+        ws.onmessage = (m) => {
+            this.props.dataStore.onWsEvent(m);
         };
         ws.onclose = e => {
             that.timeout = that.timeout + that.timeout;
@@ -35,7 +43,7 @@ class App extends React.Component {
     };
 
     sendMessage = () => {
-        if(this.state.ws) {
+        if (this.state.ws) {
             this.state.ws.send("Now is " + new Date())
         }
     }
@@ -44,9 +52,7 @@ class App extends React.Component {
         return (
             <div className="w-full h-full flex flex-col">
                 <Nav/>
-                <div className="pt-10">
-                    <button className="bg-gray-50 p-8" onClick={this.sendMessage}>Click</button>
-                </div>
+                <MainView/>
             </div>
         );
     }
