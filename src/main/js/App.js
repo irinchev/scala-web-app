@@ -26,7 +26,7 @@ class App extends React.Component {
         ws.onopen = () => {
             this.setState({ws: ws});
             let sessionInit = {mType: "SessionInit", ts: new Date().toISOString()};
-            ws.send(JSON.stringify(sessionInit));
+            //ws.send(JSON.stringify(sessionInit));
             that.timeout = 250;
             clearTimeout(connectInterval);
         };
@@ -38,6 +38,7 @@ class App extends React.Component {
             connectInterval = setTimeout(this.check, Math.min(10000, that.timeout));
         };
         ws.onerror = err => {
+            console.error(err)
             ws.close();
         };
     };
@@ -52,6 +53,7 @@ class App extends React.Component {
         return (
             <div className="w-full h-full flex flex-col">
                 <Nav/>
+                <button onClick={this.sendMessage}>CLICK</button>
                 <MainView/>
             </div>
         );

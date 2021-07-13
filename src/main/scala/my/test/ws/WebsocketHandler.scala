@@ -19,18 +19,19 @@ object WebsocketHandler {
     path("ws") {
       get {
         handleWebSocketMessages(
-          //          Flow[Message].map {
-          //            case TextMessage.Strict(s) =>
-          //              try {
-          //                val incoming = decode[IncomingMessage](s)
-          //              } catch {
-          //                case e: Exception => log.error("Cannot parse JSON string", e)
-          //              }
-          //              TextMessage.Strict("Ok got the message.")
-          //          }
+//                    Flow[Message].map {
+//                      case TextMessage.Strict(s) =>
+//                        try {
+//                          val incoming = decode[IncomingMessage](s)
+//                        } catch {
+//                          case e: Exception => log.error("Cannot parse JSON string", e)
+//                        }
+//                        TextMessage.Strict("Ok got the message.")
+//                    }
           Flow.fromSinkAndSource(
             sink = parseIncomingMessage.to(Sink.foreach(log.info("{}", _))),
-            source = Source[Message](List(TextMessage("123123123123")))
+            //source = Source[Message](List(TextMessage("123123123123")))
+            source = Source.maybe
           )
         )
       }
@@ -40,6 +41,7 @@ object WebsocketHandler {
   private def parseIncomingMessage(implicit decoder: Decoder[IncomingMessage]): Flow[Message, IncomingMessage, NotUsed] =
     Flow[Message].collect {
       case TextMessage.Strict(s) =>
+        log.info(s"$s")
         decode[IncomingMessage](s).right.get
     }
 }
