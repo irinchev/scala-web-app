@@ -6,15 +6,18 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.management.scaladsl.AkkaManagement
 import com.typesafe.config.{Config, ConfigFactory}
+import org.slf4j.LoggerFactory.getLogger
 import scalikejdbc.config.DBs
 
 import scala.concurrent.ExecutionContext
 
 object Main extends BaseService("web-app") with Routes {
+  val log = getLogger("main")
+  log.info("SStarting ..")
   DBs.setupAll()
-  Http()
-    .newServerAt(config.getString("http.interface"), config.getInt("http.port"))
-    .bindFlow(routes)
+//  Http()
+//    .newServerAt(config.getString("http.interface"), config.getInt("http.port"))
+//    .bindFlow(routes)
 }
 
 class BaseService(val serviceName: String) extends App {

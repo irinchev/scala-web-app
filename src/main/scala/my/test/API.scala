@@ -1,18 +1,39 @@
 package my.test
 
+import akka.actor.typed.ActorRef
 import cats.implicits._
 import io.circe.{Decoder, DecodingFailure, HCursor}
 import io.circe.generic.auto._
 
-sealed trait IncomingMessage
+sealed trait WsMessage
 
 case class SessionInit(
     ts: String
-) extends IncomingMessage
+) extends WsMessage
+
+case class SessionInitWrapper(
+    client: ActorRef[WsMessage]
+) extends WsMessage
+
+case class SessionOpened(
+    id: String
+) extends WsMessage
+
+case class SessionClose(
+    ts: String
+) extends WsMessage
+
+case class SessionError(
+    ex: Throwable
+) extends WsMessage
+
+case class DatagramMessage(
+    data: String
+) extends WsMessage
 
 object JsonCodecs {
 
-  implicit val decoder: Decoder[IncomingMessage] = (c: HCursor) =>
+  implicit val decoder: Decoder[WsMessage] = (c: HCursor) =>
     for {
       t <- c.get[String]("mType")
       result <- t match {
